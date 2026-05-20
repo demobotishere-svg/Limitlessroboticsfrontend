@@ -28,6 +28,8 @@
   "include": [
     "src/**/*.js",
     "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

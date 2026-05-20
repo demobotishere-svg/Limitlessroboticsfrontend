@@ -1,13 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 
-const SendIcon = Icons['Send'] || Icons['HelpCircle'];
 const CheckCircleIcon = Icons['CheckCircle'] || Icons['HelpCircle'];
-const AlertCircleIcon = Icons['AlertCircle'] || Icons['HelpCircle'];
-const UserIcon = Icons['User'] || Icons['HelpCircle'];
-const MailIcon = Icons['Mail'] || Icons['HelpCircle'];
-const MessageSquareIcon = Icons['MessageSquare'] || Icons['HelpCircle'];
 
 const INITIAL_FORM = { name: '', email: '', message: '' };
 const INITIAL_ERRORS = { name: '', email: '', message: '' };
@@ -26,12 +21,27 @@ function hasErrors(errs) {
   return Object.values(errs).some(Boolean);
 }
 
+/** @type {import('framer-motion').Variants} */
+const containerVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: 'easeOut', staggerChildren: 0.1, delayChildren: 0.05 }
+  }
+};
+
+/** @type {import('framer-motion').Variants} */
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+};
+
 export default function ContactForm() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
   const [focused, setFocused] = useState('');
   const [status, setStatus] = useState('idle');
-  const timerRef = useRef(null);
 
   function handleChange(e) {
     const { name, value } = e.currentTarget;
@@ -55,25 +65,11 @@ export default function ContactForm() {
     setErrors(errs);
     if (hasErrors(errs)) return;
     setStatus('loading');
-    await new Promise(resolve => { timerRef.current = setTimeout(resolve, 1800); });
+    await new Promise(resolve => setTimeout(resolve, 1500));
     setStatus('success');
     setForm(INITIAL_FORM);
     setErrors(INITIAL_ERRORS);
   }
-
-  const containerVariants = {
-    hidden: { opacity: 0, y: 48 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.7, ease: 'easeOut', staggerChildren: 0.12, delayChildren: 0.15 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-  };
 
   const isLoading = status === 'loading';
   const isSuccess = status === 'success';
@@ -81,200 +77,160 @@ export default function ContactForm() {
   return (
     <section
       id="contact"
-      className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black py-24 px-4"
+      className="relative w-full flex items-center justify-center py-24 md:py-32 bg-transparent px-6"
     >
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_60%,rgba(0,136,255,0.10)_0%,transparent_70%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_30%_at_50%_0%,rgba(0,255,255,0.07)_0%,transparent_70%)]" />
-        <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00FFFF" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-cyan-500/5 blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-blue-600/5 blur-3xl" />
-      </div>
-
-      <motion.div
-        className="relative z-10 w-full max-w-2xl"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-60px' }}
-      >
-        <motion.div variants={itemVariants} className="mb-10 text-center">
-          <p className="text-xs font-semibold tracking-[0.35em] text-cyan-400 uppercase mb-3 font-outfit">Initiate Contact</p>
-          <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight" style={{fontFamily: "'Orbitron', sans-serif"}}>
-            Connect With
-            <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-400 bg-clip-text text-transparent">
-              Limitless
-            </span>
-          </h2>
-          <p className="mt-4 text-sm md:text-base text-gray-400 max-w-md mx-auto leading-relaxed font-outfit">
-            Whether you are a partner, investor, or pioneer—open a channel. Our systems are always listening.
-          </p>
-        </motion.div>
-
+      <div className="relative z-10 w-full max-w-xl">
         <motion.div
-          variants={itemVariants}
-          className="relative rounded-3xl p-8 md:p-12 border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-[0_0_60px_rgba(0,255,255,0.07),0_0_0_1px_rgba(0,255,255,0.04)]"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className="flex flex-col gap-10"
         >
-          <div className="absolute inset-0 rounded-3xl pointer-events-none overflow-hidden">
-            <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
-            <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-            <div className="absolute top-8 bottom-8 left-0 w-px bg-gradient-to-b from-transparent via-cyan-400/20 to-transparent" />
-            <div className="absolute top-8 bottom-8 right-0 w-px bg-gradient-to-b from-transparent via-cyan-400/20 to-transparent" />
-            <div className="absolute top-0 left-0 w-6 h-6 border-t border-l border-cyan-400/50 rounded-tl-3xl" />
-            <div className="absolute top-0 right-0 w-6 h-6 border-t border-r border-cyan-400/50 rounded-tr-3xl" />
-            <div className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-cyan-400/50 rounded-bl-3xl" />
-            <div className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-cyan-400/50 rounded-br-3xl" />
-          </div>
+          {/* Header */}
+          <motion.div variants={itemVariants} className="text-center">
+            <p
+              className="text-[10px] font-semibold tracking-[0.25em] uppercase text-neutral-405 mb-3"
+              style={{ fontFamily: "'Outfit', sans-serif" }}
+            >
+              Contact Us
+            </p>
+            <h2
+              className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 font-outfit"
+            >
+              Partner with <span className="font-playfair font-light italic text-neutral-550">Limitless</span>.
+            </h2>
+            <p
+              className="mt-3 text-xs sm:text-sm text-neutral-500 max-w-sm mx-auto leading-relaxed font-light"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Whether scoping a new autonomous deployment, inquiring about programs, or exploring careers—reach out to our engineers.
+            </p>
+          </motion.div>
 
-          <AnimatePresence mode="wait">
-            {isSuccess ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.92 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="flex flex-col items-center justify-center py-16 text-center gap-6"
-              >
+          {/* Form Box */}
+          <motion.div
+            variants={itemVariants}
+            className="relative rounded-3xl p-8 md:p-12 border border-neutral-100 bg-neutral-50/50 shadow-sm"
+          >
+            <AnimatePresence mode="wait">
+              {isSuccess ? (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 220, damping: 15, delay: 0.1 }}
-                  className="relative flex items-center justify-center w-20 h-20 rounded-full bg-cyan-400/10 border border-cyan-400/40"
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex flex-col items-center justify-center py-12 text-center gap-5"
                 >
-                  <div className="absolute inset-0 rounded-full bg-cyan-400/10 animate-ping" />
-                  <CheckCircleIcon className="w-9 h-9 text-cyan-400" />
+                  <div
+                    className="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-neutral-100 shadow-sm"
+                  >
+                    <CheckCircleIcon className="w-5 h-5 text-neutral-900" />
+                  </div>
+                  <div>
+                    <h3
+                      className="text-base font-bold text-neutral-900 font-outfit"
+                    >
+                      Message Logged
+                    </h3>
+                    <p
+                      className="text-xs text-neutral-500 max-w-xs mx-auto leading-relaxed font-light mt-1.5"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      Your transmission was received. A representative will contact you within 24 business hours.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setStatus('idle')}
+                    className="mt-2 px-5 py-2 text-[10px] font-semibold tracking-wider uppercase text-neutral-600 border border-neutral-200 rounded-full bg-white hover:bg-neutral-50 transition-colors duration-250 font-outfit"
+                  >
+                    New Message
+                  </button>
                 </motion.div>
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-2" style={{fontFamily: "'Orbitron', sans-serif"}}>Transmission Received</h3>
-                  <p className="text-gray-400 text-sm font-outfit max-w-xs mx-auto leading-relaxed">
-                    Our systems have logged your signal. A Limitless engineer will respond within 24 hours.
-                  </p>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => setStatus('idle')}
-                  className="mt-2 px-6 py-2 rounded-xl border border-cyan-400/30 text-cyan-400 text-xs tracking-widest uppercase font-semibold font-outfit hover:bg-cyan-400/10 transition-colors duration-200"
+              ) : (
+                <motion.form
+                  key="form"
+                  onSubmit={handleSubmit}
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-5"
                 >
-                  New Message
-                </motion.button>
-              </motion.div>
-            ) : (
-              <motion.form
-                key="form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                onSubmit={handleSubmit}
-                noValidate
-                className="flex flex-col gap-7"
-              >
-                <FieldGroup
-                  id="name"
-                  name="name"
-                  label="Full Name"
-                  type="text"
-                  placeholder="Commander Reyes"
-                  value={form.name}
-                  error={errors.name}
-                  focused={focused === 'name'}
-                  onChange={handleChange}
-                  onFocus={() => setFocused('name')}
-                  onBlur={handleBlur}
-                  Icon={UserIcon}
-                />
-                <FieldGroup
-                  id="email"
-                  name="email"
-                  label="Email Address"
-                  type="email"
-                  placeholder="commander@limitless.io"
-                  value={form.email}
-                  error={errors.email}
-                  focused={focused === 'email'}
-                  onChange={handleChange}
-                  onFocus={() => setFocused('email')}
-                  onBlur={handleBlur}
-                  Icon={MailIcon}
-                />
-                <TextAreaGroup
-                  id="message"
-                  name="message"
-                  label="Message"
-                  placeholder="Describe your mission or inquiry..."
-                  value={form.message}
-                  error={errors.message}
-                  focused={focused === 'message'}
-                  onChange={handleChange}
-                  onFocus={() => setFocused('message')}
-                  onBlur={handleBlur}
-                  Icon={MessageSquareIcon}
-                />
+                  <FieldGroup
+                    id="name"
+                    name="name"
+                    label="Full Name"
+                    placeholder="E.g. Alexander Mercer"
+                    value={form.name}
+                    error={errors.name}
+                    focused={focused === 'name'}
+                    onChange={handleChange}
+                    onFocus={() => setFocused('name')}
+                    onBlur={handleBlur}
+                  />
+                  <FieldGroup
+                    id="email"
+                    name="email"
+                    label="Email Address"
+                    type="email"
+                    placeholder="alexander@limitless.io"
+                    value={form.email}
+                    error={errors.email}
+                    focused={focused === 'email'}
+                    onChange={handleChange}
+                    onFocus={() => setFocused('email')}
+                    onBlur={handleBlur}
+                  />
+                  <TextAreaGroup
+                    id="message"
+                    name="message"
+                    label="Message"
+                    placeholder="Describe your project or inquiry..."
+                    value={form.message}
+                    error={errors.message}
+                    focused={focused === 'message'}
+                    onChange={handleChange}
+                    onFocus={() => setFocused('message')}
+                    onBlur={handleBlur}
+                  />
 
-                <motion.button
-                  type="submit"
-                  disabled={isLoading}
-                  whileHover={!isLoading ? { scale: 1.02, boxShadow: '0 0 32px rgba(0,255,255,0.35)' } : {}}
-                  whileTap={!isLoading ? { scale: 0.98 } : {}}
-                  transition={{ duration: 0.18 }}
-                  className="relative mt-2 w-full py-5 px-8 rounded-2xl font-bold text-sm tracking-[0.25em] uppercase text-black overflow-hidden cursor-pointer disabled:cursor-not-allowed"
-                  style={{fontFamily: "'Orbitron', sans-serif"}}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300" />
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,255,0.25),transparent_70%)]" />
-                  {isLoading && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                      animate={{ x: ['-100%', '200%'] }}
-                      transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
-                    />
-                  )}
-                  <span className="relative z-10 flex items-center justify-center gap-3">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3 mt-4 text-center text-xs font-semibold tracking-wider uppercase text-white bg-black hover:bg-neutral-850 rounded-full transition-colors duration-300 font-outfit flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
                     {isLoading ? (
                       <>
                         <motion.span
                           animate={{ rotate: 360 }}
                           transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
-                          className="inline-block w-4 h-4 border-2 border-black/30 border-t-black rounded-full"
+                          className="inline-block w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full"
                         />
-                        Transmitting...
+                        Sending...
                       </>
                     ) : (
-                      <>
-                        <SendIcon className="w-4 h-4" />
-                        Send Transmission
-                      </>
+                      'Send Message'
                     )}
-                  </span>
-                </motion.button>
-              </motion.form>
-            )}
-          </AnimatePresence>
+                  </button>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }
 
-function FieldGroup({ id, name, label, type, placeholder, value, error, focused, onChange, onFocus, onBlur, Icon }) {
+function FieldGroup({ id, name, label, type = 'text', placeholder, value, error, focused, onChange, onFocus, onBlur }) {
   const AlertIcon = Icons['AlertCircle'] || Icons['HelpCircle'];
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
-        className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase font-outfit transition-colors duration-200"
-        style={{ color: focused ? '#00FFFF' : error ? '#f87171' : '#94a3b8' }}
+        className="text-[10px] font-semibold tracking-wider uppercase font-outfit"
+        style={{ color: error ? '#ef4444' : '#6b7280' }}
       >
-        <Icon className="w-3.5 h-3.5" />
         {label}
       </label>
       <div className="relative">
@@ -288,26 +244,23 @@ function FieldGroup({ id, name, label, type, placeholder, value, error, focused,
           onFocus={onFocus}
           onBlur={onBlur}
           autoComplete="off"
-          className="w-full bg-white/[0.03] text-white placeholder-gray-600 font-outfit text-sm rounded-xl px-4 py-4 border outline-none transition-all duration-200"
+          className="w-full bg-white text-neutral-900 placeholder-neutral-400 font-inter text-xs sm:text-sm rounded-xl px-4 py-3 border outline-none transition-all duration-200"
           style={{
-            borderColor: error ? 'rgba(248,113,113,0.6)' : focused ? 'rgba(0,255,255,0.55)' : 'rgba(255,255,255,0.1)',
-            boxShadow: focused ? '0 0 0 1px rgba(0,255,255,0.2), inset 0 0 12px rgba(0,255,255,0.04)' : error ? '0 0 0 1px rgba(248,113,113,0.15)' : 'none',
+            borderColor: error ? '#fca5a5' : focused ? '#000000' : '#e5e7eb',
+            boxShadow: focused ? '0 0 0 1px rgba(0,0,0,0.05)' : 'none',
           }}
         />
-        {focused && !error && (
-          <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent pointer-events-none" />
-        )}
       </div>
       <AnimatePresence>
         {error && (
           <motion.p
-            initial={{ opacity: 0, y: -6 }}
+            initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22 }}
-            className="flex items-center gap-1.5 text-xs text-red-400 font-outfit"
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-1 text-[10px] text-red-500 font-outfit mt-0.5"
           >
-            <AlertIcon className="w-3 h-3 flex-shrink-0" />
+            <AlertIcon className="w-2.5 h-2.5 flex-shrink-0" />
             {error}
           </motion.p>
         )}
@@ -316,16 +269,15 @@ function FieldGroup({ id, name, label, type, placeholder, value, error, focused,
   );
 }
 
-function TextAreaGroup({ id, name, label, placeholder, value, error, focused, onChange, onFocus, onBlur, Icon }) {
+function TextAreaGroup({ id, name, label, placeholder, value, error, focused, onChange, onFocus, onBlur }) {
   const AlertIcon = Icons['AlertCircle'] || Icons['HelpCircle'];
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
-        className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase font-outfit transition-colors duration-200"
-        style={{ color: focused ? '#00FFFF' : error ? '#f87171' : '#94a3b8' }}
+        className="text-[10px] font-semibold tracking-wider uppercase font-outfit"
+        style={{ color: error ? '#ef4444' : '#6b7280' }}
       >
-        <Icon className="w-3.5 h-3.5" />
         {label}
       </label>
       <div className="relative">
@@ -337,27 +289,24 @@ function TextAreaGroup({ id, name, label, placeholder, value, error, focused, on
           onChange={onChange}
           onFocus={onFocus}
           onBlur={onBlur}
-          rows={5}
-          className="w-full bg-white/[0.03] text-white placeholder-gray-600 font-outfit text-sm rounded-xl px-4 py-4 border outline-none transition-all duration-200 resize-none"
+          rows={4}
+          className="w-full bg-white text-neutral-900 placeholder-neutral-400 font-inter text-xs sm:text-sm rounded-xl px-4 py-3 border outline-none transition-all duration-200 resize-none"
           style={{
-            borderColor: error ? 'rgba(248,113,113,0.6)' : focused ? 'rgba(0,255,255,0.55)' : 'rgba(255,255,255,0.1)',
-            boxShadow: focused ? '0 0 0 1px rgba(0,255,255,0.2), inset 0 0 12px rgba(0,255,255,0.04)' : error ? '0 0 0 1px rgba(248,113,113,0.15)' : 'none',
+            borderColor: error ? '#fca5a5' : focused ? '#000000' : '#e5e7eb',
+            boxShadow: focused ? '0 0 0 1px rgba(0,0,0,0.05)' : 'none',
           }}
         />
-        {focused && !error && (
-          <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent pointer-events-none" />
-        )}
       </div>
       <AnimatePresence>
         {error && (
           <motion.p
-            initial={{ opacity: 0, y: -6 }}
+            initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22 }}
-            className="flex items-center gap-1.5 text-xs text-red-400 font-outfit"
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-1 text-[10px] text-red-500 font-outfit mt-0.5"
           >
-            <AlertIcon className="w-3 h-3 flex-shrink-0" />
+            <AlertIcon className="w-2.5 h-2.5 flex-shrink-0" />
             {error}
           </motion.p>
         )}

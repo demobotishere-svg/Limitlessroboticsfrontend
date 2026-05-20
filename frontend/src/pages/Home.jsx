@@ -1,4 +1,3 @@
-import { lazy, Suspense } from 'react';
 import Header from '../components/Header';
 import HeroShowcase from '../components/HeroShowcase';
 import StatsCounters from '../components/StatsCounters';
@@ -13,7 +12,8 @@ import Footer from '../components/Footer';
 
 function Home() {
   return (
-    <div className="relative min-h-screen bg-black overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#fafafa] text-slate-900 overflow-x-hidden">
+      <div className="absolute inset-0 luxury-dot-grid opacity-60 pointer-events-none z-0" />
       <Header />
       <main>
         <HeroShowcase />
